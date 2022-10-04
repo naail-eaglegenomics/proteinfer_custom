@@ -112,8 +112,6 @@ def load_models(model_cache_path, num_ensemble_elements):
     that install_models.py needs to be rerun.
   """
   try:
-    pfam_inferrer_paths = _get_inferrer_paths(utils.OSS_PFAM_ZIPPED_MODELS_URLS,
-                                              model_cache_path)
     ec_inferrer_paths = _get_inferrer_paths(utils.OSS_EC_ZIPPED_MODELS_URLS,
                                             model_cache_path)
     go_inferrer_paths = _get_inferrer_paths(utils.OSS_GO_ZIPPED_MODELS_URLS,
@@ -121,7 +119,7 @@ def load_models(model_cache_path, num_ensemble_elements):
 
     to_return = []
     inferrer_list_paths_for_all_models = [
-        pfam_inferrer_paths, ec_inferrer_paths, go_inferrer_paths
+        ec_inferrer_paths, go_inferrer_paths
     ]
     pbar = tqdm.tqdm(
         desc='Loading models',
@@ -137,11 +135,10 @@ def load_models(model_cache_path, num_ensemble_elements):
         pbar.update()
       to_return.append(inferrer_list)
 
-    pfam_inferrers = to_return[0]
-    ec_inferrers = to_return[1]
-    go_inferrers = to_return[2]
+    ec_inferrers = to_return[0]
+    go_inferrers = to_return[1]
 
-    return pfam_inferrers, ec_inferrers, go_inferrers
+    return ec_inferrers, go_inferrers
 
   except tf.errors.NotFoundError as exc:
     err_msg = 'Unable to find cached models in {}.'.format(model_cache_path)
@@ -256,7 +253,7 @@ def order_df_for_output(predictions_df):
 
   Sort order:
   Sort by query sequence name as they are in `predictions_df`.
-  Put all Pfam labels first, then EC labels, then GO labels.
+  Put all EC labels first, then GO labels.
   Given that,
     - if it's an EC label, sort by label alphabetically.
     - else, sort by confidence descending.
@@ -292,14 +289,12 @@ def order_df_for_output(predictions_df):
     return (seq_name_to_original_order[df_row.sequence_name],
             df_row.predicted_label)
 
-  pfam_df = filter_by_label_type(predictions_df, 'Pfam')
   ec_df = filter_by_label_type(predictions_df, 'EC')
   go_df = filter_by_label_type(predictions_df, 'GO')
 
-  pfam_df_sorted = _sort_df_multiple_columns(pfam_df, _orderer_pfam_and_go)
   ec_df_sorted = _sort_df_multiple_columns(ec_df, _orderer_ec)
   go_df_sorted = _sort_df_multiple_columns(go_df, _orderer_pfam_and_go)
-  return pd.concat([pfam_df_sorted, ec_df_sorted, go_df_sorted])
+  return pd.concat([ec_df_sorted, go_df_sorted])
 
 
 def _format_float_confidence_for_output(input_float,
