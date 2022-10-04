@@ -193,6 +193,7 @@ class Inferrer(object):
       savedmodel_dir_path = latest_savedmodel_path_from_base_path(
           savedmodel_dir_path)
     self.batch_size = batch_size
+    self.return_memory_usage = return_memory_usage
     self._graph = tf.Graph()
     self._model_name_scope = 'inferrer'
     with self._graph.as_default():
@@ -259,7 +260,7 @@ class Inferrer(object):
     else:
       fetch = self._fetch
     with self._graph.as_default():
-      if return_memory_usage:
+      if self.return_memory_usage:
         print_mem_usage()
       return self._sess.run(fetch, {self._sequences: seqs})
 
