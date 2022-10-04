@@ -67,6 +67,9 @@ flags.DEFINE_float(
 flags.DEFINE_string('model_cache_path', 'cached_models',
                     'Path from which to use downloaded models and metadata.')
 
+flags.DEFINE_integer('batch_size', 64,
+                    'Number of sequences to use in batched inference')
+
 # A list of inferrers that all have the same label set.
 _InferrerEnsemble = List[inference.Inferrer]
 
@@ -131,7 +134,7 @@ def load_models(model_cache_path, num_ensemble_elements):
       inner_itr = inferrer_list_paths[:num_ensemble_elements]
       inferrer_list = []
       for p in inner_itr:
-        inferrer_list.append(inference.Inferrer(p, use_tqdm=True))
+        inferrer_list.append(inference.Inferrer(p, use_tqdm=True, batch_size=FLAGS.batch_size))
         pbar.update()
       to_return.append(inferrer_list)
 
