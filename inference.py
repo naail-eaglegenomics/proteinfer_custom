@@ -36,7 +36,7 @@ import tensorflow.compat.v1 as tf
 import tensorflow_hub as hub
 import tqdm
 import scipy.sparse
-from gpu_benchmarking import print_memory_usage
+from gpu_benchmarking import print_mem_usage
 
 
 def call_module(module, one_hots, row_lengths, signature):
@@ -260,7 +260,7 @@ class Inferrer(object):
       fetch = self._fetch
     with self._graph.as_default():
       if return_memory_usage:
-        print_memory_usage()
+        print_mem_usage()
       return self._sess.run(fetch, {self._sequences: seqs})
 
   @functools.lru_cache(maxsize=None)
