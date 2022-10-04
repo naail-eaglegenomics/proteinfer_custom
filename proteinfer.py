@@ -48,6 +48,10 @@ FLAGS = flags.FLAGS
 flags.DEFINE_string('i', None, 'Input fasta file path.')
 flags.DEFINE_string('o', None, 'Output write path.')
 
+flags.DEFINE_bool(
+    'print_memory_usage', False,
+    'Set to true to show memory usage after every batch')
+
 flags.DEFINE_integer(
     'num_ensemble_elements', 1,
     'In order to run with more than one ensemble element, you will need to run '
@@ -134,7 +138,7 @@ def load_models(model_cache_path, num_ensemble_elements):
       inner_itr = inferrer_list_paths[:num_ensemble_elements]
       inferrer_list = []
       for p in inner_itr:
-        inferrer_list.append(inference.Inferrer(p, use_tqdm=True, batch_size=FLAGS.batch_size))
+        inferrer_list.append(inference.Inferrer(p, use_tqdm=True, batch_size=FLAGS.batch_size, return_memory_usage=FLAGS.print_memory_usage))
         pbar.update()
       to_return.append(inferrer_list)
 
