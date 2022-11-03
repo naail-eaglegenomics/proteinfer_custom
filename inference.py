@@ -304,9 +304,15 @@ class Inferrer(object):
     # the identity permutation (a sorted list).
     reverser = np.argsort(sorter)
 
+    num_seqs = len(np_seqs)
+
     activation_list = []
     batches = np.array_split(np_seqs[sorter],
                              np.ceil(len(np_seqs) / self.batch_size))
+
+    print(f"{num_seqs} total sequences")
+    print(f"{len(batches)} batches of size {self.batch_size}")
+
     if self._use_tqdm:
       batches = tqdm.tqdm(
           batches,
